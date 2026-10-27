@@ -49,7 +49,7 @@ export function SiteHeader() {
           ))}
         </nav>
 
-        <a className="button button-header" href="#student-portal">
+        <a className="button button-header" href="/student-portal">
           Student Portal
           <Icon name="arrow-right" />
         </a>
@@ -83,7 +83,7 @@ export function SiteHeader() {
         ))}
         <a
           className="mobile-portal-link"
-          href="#student-portal"
+          href="/student-portal"
           onClick={() => setMenuOpen(false)}
         >
           Student Portal <Icon name="arrow-right" />

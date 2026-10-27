@@ -113,7 +113,7 @@ export default function HomePage() {
                 <a className="button button-primary" href="#services">
                   Explore Learning Services <Icon name="arrow-right" />
                 </a>
-                <a className="button button-secondary" href="#student-portal">
+                <a className="button button-secondary" href="/student-portal">
                   Student Portal
                 </a>
               </div>
@@ -223,13 +223,12 @@ export default function HomePage() {
                 ALABATT-HUB is being developed to make essential academic
                 services more accessible through one connected digital platform.
               </p>
-              <span className="portal-notice">
-                <span className="status-dot" />
-                Student portal coming soon
+              <span className="portal-notice" id="portal-notice">
+                Frontend demo only — authentication and student services are not production-ready.
               </span>
             </div>
-            <a className="button portal-button" href="#contact">
-              Stay in touch <Icon name="arrow-right" />
+            <a className="button portal-button" href="/student-portal">
+              Student Portal <Icon name="arrow-right" />
             </a>
           </div>
         </section>
