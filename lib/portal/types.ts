@@ -1,8 +1,11 @@
+export type PortalRole = "student" | "admin" | "instructor";
+
 export interface StudentIdentity {
   id: string;
   fullName: string;
   email: string;
   studentId: string;
+  role?: PortalRole;
 }
 
 export interface DemoAccount extends StudentIdentity {
@@ -14,6 +17,7 @@ export interface DemoAccount extends StudentIdentity {
 export interface PortalSession {
   email: string;
   createdAt: string;
+  role?: PortalRole;
 }
 
 export interface StudentProfile {
@@ -67,4 +71,59 @@ export interface StudentData {
   payments: Payment[];
   notifications: StudentNotification[];
   activities: StudentActivity[];
+}
+
+export interface AdminStudentRecord {
+  id: string;
+  studentId: string;
+  fullName: string;
+  email: string;
+  phone: string;
+  programme: string;
+  level: string;
+  enrollmentStatus: "Active" | "Inactive" | "Pending";
+  dateOfEnrollment: string;
+  registeredCourses: string[];
+}
+
+export interface AdminInstructorRecord {
+  id: string;
+  instructorId: string;
+  fullName: string;
+  email: string;
+  phone: string;
+  specialization: string;
+  assignedCourses: string[];
+  status: "Active" | "On Leave" | "Inactive";
+}
+
+export interface AdminCourseRecord {
+  id: string;
+  code: string;
+  title: string;
+  description: string;
+  programme: string;
+  instructorId: string;
+  creditUnits: number;
+  registrationFee: number;
+  status: "Open" | "Closed" | "Draft";
+  modules: string[];
+}
+
+export interface AdminVideoSession {
+  id: string;
+  title: string;
+  date: string;
+  time: string;
+  host: string;
+  link: string;
+  status: "Scheduled" | "Live" | "Completed";
+}
+
+export interface AdminDemoState {
+  students: AdminStudentRecord[];
+  instructors: AdminInstructorRecord[];
+  courses: AdminCourseRecord[];
+  videoSessions: AdminVideoSession[];
+  paymentActivity: Payment[];
 }

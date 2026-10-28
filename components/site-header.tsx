@@ -50,7 +50,7 @@ export function SiteHeader() {
         </nav>
 
         <a className="button button-header" href="/student-portal">
-          Student Portal
+          Login to Portal
           <Icon name="arrow-right" />
         </a>
 
@@ -86,7 +86,7 @@ export function SiteHeader() {
           href="/student-portal"
           onClick={() => setMenuOpen(false)}
         >
-          Student Portal <Icon name="arrow-right" />
+          Login to Portal <Icon name="arrow-right" />
         </a>
       </nav>
     </header>

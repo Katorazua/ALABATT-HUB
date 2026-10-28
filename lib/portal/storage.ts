@@ -91,7 +91,11 @@ function isPortalSession(value: unknown): value is PortalSession {
   return (
     isRecord(value) &&
     typeof value.email === "string" &&
-    typeof value.createdAt === "string"
+    typeof value.createdAt === "string" &&
+    (value.role === undefined ||
+      value.role === "student" ||
+      value.role === "admin" ||
+      value.role === "instructor")
   );
 }
 

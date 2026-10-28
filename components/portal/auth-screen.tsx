@@ -10,8 +10,12 @@ import {
   createDemoAccount,
 } from "@/lib/portal/auth-service";
 import {
+  ADMIN_LOGIN_EMAIL,
+  ADMIN_LOGIN_PASSWORD,
   DEMO_LOGIN_EMAIL,
   DEMO_LOGIN_PASSWORD,
+  INSTRUCTOR_LOGIN_EMAIL,
+  INSTRUCTOR_LOGIN_PASSWORD,
 } from "@/lib/portal/demo-data";
 import { readActiveSession, writeActiveSession } from "@/lib/portal/storage";
 import type { StudentIdentity } from "@/lib/portal/types";
@@ -28,6 +32,7 @@ export function AuthScreen() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [selectedDemoRole, setSelectedDemoRole] = useState<"student" | "admin" | "instructor">("student");
   const [message, setMessage] = useState("");
   const [messageKind, setMessageKind] = useState<"error" | "success" | "info">("info");
   const [pendingIdentity, setPendingIdentity] = useState<StudentIdentity | null>(null);
@@ -38,7 +43,16 @@ export function AuthScreen() {
     async function checkSession() {
       await Promise.resolve();
       try {
-        if (readActiveSession()) router.replace("/student-portal/dashboard");
+        const session = readActiveSession();
+        if (!session) return;
+
+        const targetRoute =
+          session.role === "admin"
+            ? "/admin-portal/dashboard"
+            : session.role === "instructor"
+              ? "/instructor-portal/dashboard"
+              : "/student-portal/dashboard";
+        router.replace(targetRoute);
       } catch (error) {
         if (!active) return;
         setMessage(error instanceof Error ? error.message : "Could not read the demo session.");
@@ -66,10 +80,20 @@ export function AuthScreen() {
       }
 
       writeActiveSession(
-        { email: identity.email, createdAt: new Date().toISOString() },
+        {
+          email: identity.email,
+          createdAt: new Date().toISOString(),
+          role: identity.role ?? "student",
+        },
         rememberMe,
       );
-      router.push("/student-portal/dashboard");
+      router.push(
+        identity.role === "admin"
+          ? "/admin-portal/dashboard"
+          : identity.role === "instructor"
+            ? "/instructor-portal/dashboard"
+            : "/student-portal/dashboard",
+      );
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Demo sign-in could not be completed.");
       setMessageKind("error");
@@ -121,10 +145,17 @@ export function AuthScreen() {
         {
           email: pendingIdentity.email,
           createdAt: new Date().toISOString(),
+          role: pendingIdentity.role ?? "student",
         },
         rememberMe,
       );
-      router.push("/student-portal/dashboard");
+      router.push(
+        pendingIdentity.role === "admin"
+          ? "/admin-portal/dashboard"
+          : pendingIdentity.role === "instructor"
+            ? "/instructor-portal/dashboard"
+            : "/student-portal/dashboard",
+      );
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "The demo session could not be started.");
       setMessageKind("error");
@@ -133,6 +164,29 @@ export function AuthScreen() {
 
   function showPasswordRecoveryNotice() {
     setMessage("Password recovery is a prototype placeholder. No email will be sent.");
+    setMessageKind("info");
+  }
+
+  function applyDemoCredentials(role: "student" | "admin" | "instructor") {
+    setSelectedDemoRole(role);
+    if (role === "admin") {
+      setEmail(ADMIN_LOGIN_EMAIL);
+      setPassword(ADMIN_LOGIN_PASSWORD);
+      setMessage("Admin demo credentials applied. You can sign in or modify the form as needed.");
+      setMessageKind("info");
+      return;
+    }
+    if (role === "instructor") {
+      setEmail(INSTRUCTOR_LOGIN_EMAIL);
+      setPassword(INSTRUCTOR_LOGIN_PASSWORD);
+      setMessage("Instructor demo credentials applied. You can sign in or modify the form as needed.");
+      setMessageKind("info");
+      return;
+    }
+
+    setEmail(DEMO_LOGIN_EMAIL);
+    setPassword(DEMO_LOGIN_PASSWORD);
+    setMessage("Student demo credentials applied. You can sign in or modify the form as needed.");
     setMessageKind("info");
   }
 
@@ -167,11 +221,11 @@ export function AuthScreen() {
 
         <section aria-labelledby="auth-title" className="auth-card">
           <div className="auth-card-heading">
-            <span className="eyebrow">STUDENT PORTAL</span>
+            <span className="eyebrow">STUDENT, ADMIN & INSTRUCTOR PORTAL</span>
             <h2 id="auth-title">{mode === "login" ? "Welcome back" : "Create a demo account"}</h2>
             <p>
               {mode === "login"
-                ? "Sign in to explore the student portal prototype."
+                ? "Sign in with a student or admin demo account to explore the prototype."
                 : "Set up a local account to explore the prototype."}
             </p>
           </div>
@@ -256,25 +310,56 @@ export function AuthScreen() {
                 <Icon name="arrow-right" />
               </button>
               <div className="auth-divider"><span>DEMO ACCESS</span></div>
+              <div className="demo-role-picker">
+                <button
+                  className={selectedDemoRole === "student" ? "demo-role-button is-selected" : "demo-role-button"}
+                  onClick={() => applyDemoCredentials("student")}
+                  type="button"
+                >
+                  Student Demo Login
+                </button>
+                <button
+                  className={selectedDemoRole === "admin" ? "demo-role-button is-selected" : "demo-role-button"}
+                  onClick={() => applyDemoCredentials("admin")}
+                  type="button"
+                >
+                  Admin Demo Login
+                </button>
+                <button
+                  className={selectedDemoRole === "instructor" ? "demo-role-button is-selected" : "demo-role-button"}
+                  onClick={() => applyDemoCredentials("instructor")}
+                  type="button"
+                >
+                  Instructor Demo Login
+                </button>
+              </div>
               <div className="demo-credentials">
                 <div>
                   <span>Email</span>
-                  <code>{DEMO_LOGIN_EMAIL}</code>
+                  <code>
+                    {selectedDemoRole === "admin"
+                      ? ADMIN_LOGIN_EMAIL
+                      : selectedDemoRole === "instructor"
+                        ? INSTRUCTOR_LOGIN_EMAIL
+                        : DEMO_LOGIN_EMAIL}
+                  </code>
                 </div>
                 <div>
                   <span>Password</span>
-                  <code>{DEMO_LOGIN_PASSWORD}</code>
+                  <code>
+                    {selectedDemoRole === "admin"
+                      ? ADMIN_LOGIN_PASSWORD
+                      : selectedDemoRole === "instructor"
+                        ? INSTRUCTOR_LOGIN_PASSWORD
+                        : DEMO_LOGIN_PASSWORD}
+                  </code>
                 </div>
                 <button
                   className="demo-fill-button"
-                  onClick={() => {
-                    setEmail(DEMO_LOGIN_EMAIL);
-                    setPassword(DEMO_LOGIN_PASSWORD);
-                    setMessage("");
-                  }}
+                  onClick={() => applyDemoCredentials(selectedDemoRole)}
                   type="button"
                 >
-                  Use demo credentials
+                  Use selected demo credentials
                 </button>
               </div>
             </form>

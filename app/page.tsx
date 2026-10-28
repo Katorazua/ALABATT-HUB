@@ -114,7 +114,7 @@ export default function HomePage() {
                   Explore Learning Services <Icon name="arrow-right" />
                 </a>
                 <a className="button button-secondary" href="/student-portal">
-                  Student Portal
+                  Login to Portal
                 </a>
               </div>
               <div className="hero-trust">
@@ -228,7 +228,7 @@ export default function HomePage() {
               </span>
             </div>
             <a className="button portal-button" href="/student-portal">
-              Student Portal <Icon name="arrow-right" />
+              Login to Portal <Icon name="arrow-right" />
             </a>
           </div>
         </section>

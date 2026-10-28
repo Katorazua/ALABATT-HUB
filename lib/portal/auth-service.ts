@@ -1,7 +1,13 @@
 import {
+  ADMIN_IDENTITY,
+  ADMIN_LOGIN_EMAIL,
+  ADMIN_LOGIN_PASSWORD,
   DEMO_IDENTITY,
   DEMO_LOGIN_EMAIL,
   DEMO_LOGIN_PASSWORD,
+  INSTRUCTOR_IDENTITY,
+  INSTRUCTOR_LOGIN_EMAIL,
+  INSTRUCTOR_LOGIN_PASSWORD,
 } from "@/lib/portal/demo-data";
 import { readDemoAccounts, writeDemoAccounts } from "@/lib/portal/storage";
 import type { DemoAccount, StudentIdentity } from "@/lib/portal/types";
@@ -23,6 +29,7 @@ function toIdentity(account: DemoAccount): StudentIdentity {
     fullName: account.fullName,
     email: account.email,
     studentId: account.studentId,
+    role: "student",
   };
 }
 
@@ -37,7 +44,23 @@ export async function authenticateDemoAccount(
       email === DEMO_IDENTITY.studentId.toLowerCase()) &&
     password === DEMO_LOGIN_PASSWORD
   ) {
-    return DEMO_IDENTITY;
+    return { ...DEMO_IDENTITY, role: "student" };
+  }
+
+  if (
+    (email === ADMIN_LOGIN_EMAIL ||
+      email === ADMIN_IDENTITY.studentId.toLowerCase()) &&
+    password === ADMIN_LOGIN_PASSWORD
+  ) {
+    return { ...ADMIN_IDENTITY, role: "admin" };
+  }
+
+  if (
+    (email === INSTRUCTOR_LOGIN_EMAIL ||
+      email === INSTRUCTOR_IDENTITY.studentId.toLowerCase()) &&
+    password === INSTRUCTOR_LOGIN_PASSWORD
+  ) {
+    return { ...INSTRUCTOR_IDENTITY, role: "instructor" };
   }
 
   const account = readDemoAccounts().find(

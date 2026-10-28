@@ -109,6 +109,16 @@ export function DashboardShell() {
           return;
         }
 
+        if (session.role === "admin") {
+          router.replace("/admin-portal/dashboard");
+          return;
+        }
+
+        if (session.role === "instructor") {
+          router.replace("/instructor-portal/dashboard");
+          return;
+        }
+
         const currentIdentity =
           session.email.toLowerCase() === DEMO_IDENTITY.email.toLowerCase()
             ? DEMO_IDENTITY
@@ -119,6 +129,16 @@ export function DashboardShell() {
         if (!currentIdentity) {
           clearActiveSession();
           router.replace("/student-portal");
+          return;
+        }
+
+        if (currentIdentity.role === "admin") {
+          router.replace("/admin-portal/dashboard");
+          return;
+        }
+
+        if (currentIdentity.role === "instructor") {
+          router.replace("/instructor-portal/dashboard");
           return;
         }
 
@@ -398,7 +418,7 @@ export function DashboardShell() {
             <Icon name="x" />
           </button>
         </div>
-        <div className="portal-sidebar-section-label">STUDENT PORTAL</div>
+        <div className="portal-sidebar-section-label">Student Portal</div>
         <nav aria-label="Student portal navigation" className="portal-sidebar-nav">
           {PORTAL_NAVIGATION.map((group) => (
             <div className="portal-nav-group" key={group.group}>

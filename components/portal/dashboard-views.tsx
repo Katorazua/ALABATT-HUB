@@ -153,7 +153,7 @@ export function DashboardOverview({
     <>
       <div className="portal-welcome-row">
         <div>
-          <span className="portal-view-eyebrow">STUDENT OVERVIEW</span>
+          <span className="portal-view-eyebrow">Student Portal</span>
           <h1>Good morning, {firstName}</h1>
           <p>Here’s a snapshot of your demo student account.</p>
         </div>
